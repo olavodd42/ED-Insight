@@ -35,16 +35,14 @@ import importlib
 
 import pandas as pd
 import numpy as np
-import pandera as pa
-from pandera import Column, Check, DataFrameSchema
-# ydata_profiling (profiling) - optional import via importlib to avoid static linter errors
+
+# Tentar importar ydata-profiling (opcional)
 try:
     ydata_profiling = importlib.import_module("ydata_profiling")
     ProfileReport = getattr(ydata_profiling, "ProfileReport", None)
     HAS_PROFILE = ProfileReport is not None
 except Exception:
     ProfileReport = None
-    HAS_PROFILE = False
     HAS_PROFILE = False
 
 # logging
@@ -56,32 +54,20 @@ logging.basicConfig(
 
 
 # ----------------------
-# Schema: adaptável
+# Schema esperado (para validação manual)
 # ----------------------
-BASE_SCHEMA = DataFrameSchema(
-    {
-        "stay_id": Column(pa.String, nullable=False),
-        "subject_id": Column(pa.Int, nullable=False),
-        "hadm_id": Column(pa.Int, nullable=True),
-        "intime": Column(pa.DateTime, nullable=False),
-        "outtime": Column(pa.DateTime, nullable=True),
-        "gender": Column(pa.String, nullable=True, checks=Check.isin(["M", "F"])),
-        "race": Column(pa.String, nullable=True),
-        "arrival_transport": Column(pa.String, nullable=True),
-        "disposition": Column(pa.String, nullable=True),
-        "anchor_age": Column(pa.Int, nullable=True),
-        "anchor_year": Column(pa.Int, nullable=True),
-        "dod": Column(pa.DateTime, nullable=True),
-        "admittime": Column(pa.DateTime, nullable=True),
-        "dischtime": Column(pa.DateTime, nullable=True),
-        "deathtime": Column(pa.DateTime, nullable=True),
-        # as colunas abaixo são exemplos — o schema aceita colunas extras
-        # "age": Column(pa.Float, nullable=True),
-        # "temperature": Column(pa.Float, nullable=True),
-    },
-    coerce=False,
-    strict=False
-)
+EXPECTED_COLUMNS = {
+    "stay_id": str,
+    "subject_id": "Int64",
+    "hadm_id": "Int64",
+    "intime": "datetime64[ns]",
+    "outtime": "datetime64[ns]",
+    "gender": str,
+    "race": str,
+    "arrival_transport": str,
+    "disposition": str,
+    "age": float,
+}
 
 
 # ----------------------
@@ -118,14 +104,34 @@ def ensure_dtypes(master: pd.DataFrame) -> pd.DataFrame:
 
 
 def validate_basic_schema(df: pd.DataFrame) -> Dict:
-    """Valida o schema base; retorna resumo de validação"""
+    """Valida o schema base; retorna resumo de validação (sem pandera)"""
     res = {"valid": True, "errors": []}
-    try:
-        BASE_SCHEMA.validate(df, lazy=True)
-    except pa.errors.SchemaErrors as e:
+    errors = []
+    
+    # Verificar colunas obrigatórias
+    required_cols = ["stay_id", "subject_id"]
+    for col in required_cols:
+        if col not in df.columns:
+            errors.append(f"Coluna obrigatória ausente: {col}")
+        elif df[col].isna().all():
+            errors.append(f"Coluna {col} está completamente vazia")
+    
+    # Verificar stay_id não nulo
+    if "stay_id" in df.columns:
+        null_count = df["stay_id"].isna().sum()
+        if null_count > 0:
+            errors.append(f"stay_id tem {null_count} valores nulos")
+    
+    # Verificar subject_id não nulo
+    if "subject_id" in df.columns:
+        null_count = df["subject_id"].isna().sum()
+        if null_count > 0:
+            errors.append(f"subject_id tem {null_count} valores nulos")
+    
+    if errors:
         res["valid"] = False
-        # resumir as mensagens
-        res["errors"] = str(e.failure_cases.head(50).to_dict())
+        res["errors"] = errors
+    
     return res
 
 
@@ -143,11 +149,13 @@ def check_uniqueness(edstays: pd.DataFrame) -> Dict:
 def timestamp_checks(df: pd.DataFrame) -> Dict:
     out = {}
     if ("intime" in df.columns) and ("outtime" in df.columns):
-        count_inv = int((df["intime"].notna()) & (df["outtime"].notna()) & (df["intime"] > df["outtime"]).sum())
+        mask = (df["intime"].notna()) & (df["outtime"].notna()) & (df["intime"] > df["outtime"])
+        count_inv = int(mask.sum())
         out["intime_after_outtime_count"] = count_inv
     # charttime before intime?
     if "charttime" in df.columns and "intime" in df.columns:
-        cnt = int(((df["charttime"].notna()) & (df["intime"].notna()) & (df["charttime"] < df["intime"])).sum())
+        mask = (df["charttime"].notna()) & (df["intime"].notna()) & (df["charttime"] < df["intime"])
+        cnt = int(mask.sum())
         out["chart_before_intime_count"] = cnt
     return out
 

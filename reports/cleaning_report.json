@@ -1,0 +1,125 @@
+{
+  "counts": {
+    "master_rows": 425087,
+    "edstays_rows": 425087,
+    "admissions_rows": 431231
+  },
+  "schema_validation_master": {
+    "valid": true,
+    "errors": []
+  },
+  "schema_validation_edstays": {
+    "valid": true,
+    "errors": []
+  },
+  "uniqueness_edstays": {
+    "stay_id_unique": true,
+    "n_stays": 425087
+  },
+  "timestamps_master": {
+    "intime_after_outtime_count": 6
+  },
+  "timestamps_edstays": {
+    "intime_after_outtime_count": 6
+  },
+  "missingness_master": {
+    "n_columns": 120,
+    "top_missing": {
+      "deathtime": 98.91786857749119,
+      "time_to_icu_transfer": 92.49071366567314,
+      "time_to_icu_transfer_hours": 92.49071366567314,
+      "intime_icu": 92.49071366567314,
+      "dod": 85.06541013957143,
+      "hadm_id": 52.24130589738101,
+      "insurance": 52.24130589738101,
+      "edouttime": 52.24130589738101,
+      "edregtime": 52.24130589738101,
+      "dischtime": 52.24130589738101,
+      "admittime": 52.24130589738101,
+      "next_ed_visit_time": 48.34398605461941,
+      "next_ed_visit_time_diff": 48.34398605461941,
+      "next_ed_visit_time_diff_days": 48.34398605461941,
+      "ethnicity": 31.747148230832746,
+      "ed_pain_last": 11.67643329483141,
+      "ed_o2sat_last": 6.84377550948394,
+      "triage_pain": 6.3589335830077145,
+      "ed_temperature_last": 6.125334343322661,
+      "triage_temperature": 5.508284186531228
+    }
+  },
+  "missingness_edstays": {
+    "n_columns": 9,
+    "top_missing": {
+      "hadm_id": 52.24130589738101,
+      "subject_id": 0.0,
+      "stay_id": 0.0,
+      "intime": 0.0,
+      "outtime": 0.0,
+      "gender": 0.0,
+      "race": 0.0,
+      "arrival_transport": 0.0,
+      "disposition": 0.0
+    }
+  },
+  "master_missing_in_ed_count": 0,
+  "hadm_null_master_count": 222071,
+  "rows_dropped_for_missing_hadm": 222071,
+  "rows_dropped_pediatrics": 0,
+  "outlier_detect": {},
+  "final_counts": {
+    "rows": 203016,
+    "columns": 120
+  },
+  "final_missingness": {
+    "n_columns": 120,
+    "top_missing": {
+      "deathtime": 97.73416873546913,
+      "time_to_icu_transfer_hours": 84.27660874019782,
+      "time_to_icu_transfer": 84.27660874019782,
+      "intime_icu": 84.27660874019782,
+      "dod": 75.3689364385073,
+      "next_ed_visit_time": 44.83636757693975,
+      "next_ed_visit_time_diff": 44.83636757693975,
+      "next_ed_visit_time_diff_days": 44.83636757693975,
+      "triage_pain": 9.86720258501793,
+      "ed_pain_last": 9.519446743113843,
+      "triage_temperature": 8.529376994916657,
+      "triage_resprate": 7.592505024234543,
+      "triage_o2sat": 7.592505024234543,
+      "triage_dbp": 7.035406076368365,
+      "triage_sbp": 6.819659534223904,
+      "triage_heartrate": 6.609823856247783,
+      "ed_temperature_last": 5.140481538400914,
+      "ed_o2sat_last": 4.701107301887536,
+      "ed_sbp_last": 3.0805453757339323,
+      "ed_dbp_last": 3.0805453757339323,
+      "ed_resprate_last": 3.074634511565591,
+      "ed_heartrate_last": 3.024392166134689,
+      "triage_acuity": 2.5574338968357173,
+      "chiefcomplaint": 0.003940576112227608,
+      "eci_PVD": 0.0,
+      "index": 0.0,
+      "eci_PHTN": 0.0,
+      "eci_Valvular": 0.0,
+      "eci_Arrhythmia": 0.0,
+      "eci_HTN1": 0.0,
+      "cci_HIV": 0.0,
+      "cci_Cancer2": 0.0,
+      "cci_Liver2": 0.0,
+      "cci_Cancer1": 0.0,
+      "cci_Renal": 0.0,
+      "cci_Paralysis": 0.0,
+      "cci_DM2": 0.0,
+      "cci_DM1": 0.0,
+      "cci_Liver1": 0.0,
+      "eci_CHF": 0.0
+    }
+  },
+  "post_timestamps": {
+    "intime_after_outtime_count": 0
+  },
+  "final_schema_validation": {
+    "valid": true,
+    "errors": []
+  }
+}
